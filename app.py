@@ -72,16 +72,18 @@ match_index = indices[0][0]
 match = history_df.iloc[match_index]
 
 # Map impact tier logic reliably
-impact_label = f"Tier {raw_impact}"
 if raw_impact == 2 or (raw_impact == 0 and economic_damage > 1000):
     impact_title = "Severe Human Impact"
     impact_level = "Severe"
+    impact_label = "Tier 2"
 elif raw_impact == 1 or economic_damage > 250:
     impact_title = "Moderate Human Impact"
     impact_level = "Moderate"
+    impact_label = "Tier 1"
 else:
     impact_title = "Minimal Human Impact"
     impact_level = "Minimal"
+    impact_label = "Tier 0"
 
 # --- 1. THREAT ASSESSMENT DASHBOARD ---
 st.subheader("1. Threat Assessment Summary")
