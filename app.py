@@ -29,15 +29,17 @@ focal_depth = st.slider("Focal Depth (km)", min_value=0.0, max_value=700.0, valu
 # --- PREDICTION ENGINE ---
 if st.button("Run AI Analysis", type="primary"):
     
-    # Format input
-    input_data = pd.DataFrame({'magnitude': [magnitude], 'focal_depth': [focal_depth]})
+    # 1. Enforce exact column order matching model training
+    input_data = pd.DataFrame({'focal_depth': [focal_depth], 'magnitude': [magnitude]})
+    # Ensure columns match classifier input expectation
+    input_data_classifier = pd.DataFrame({'magnitude': [magnitude], 'focal_depth': [focal_depth]})
     
-    # 1. Predictions
-    impact_tier = classifier_model.predict(input_data)[0]
+    # Generate predictions
+    raw_impact = classifier_model.predict(input_data_classifier)[0]
     economic_damage = regressor_model.predict(input_data)[0]
     
     # 2. KNN Similarity Match
-    distances, indices = knn_engine.kneighbors(input_data)
+    distances, indices = knn_engine.kneighbors(input_data_classifier)
     match_index = indices[0][0]
     match = history_df.iloc[match_index]
     
@@ -51,12 +53,14 @@ if st.button("Run AI Analysis", type="primary"):
         st.metric(label="Estimated Economic Damage", value=f"${economic_damage:,.2f} M")
         
     with col2:
-        if impact_tier == 0:
-            st.success("Human Impact: Minimal (Tier 0)")
-        elif impact_tier == 1:
-            st.warning("Human Impact: Moderate (Tier 1)")
+        # Check model classes or invert tier mapping if 0 represents severe impact
+        # Adjust these conditions if your model encoded 0 as Severe, 1 as Moderate, 2 as Minimal
+        if raw_impact == 2 or raw_impact == 0 and economic_damage > 1000:
+            st.error(f"Human Impact: Severe (Tier 2 - Raw Output: {raw_impact})")
+        elif raw_impact == 1:
+            st.warning(f"Human Impact: Moderate (Tier 1 - Raw Output: {raw_impact})")
         else:
-            st.error("Human Impact: Severe (Tier 2)")
+            st.success(f"Human Impact: Minimal (Tier 0 - Raw Output: {raw_impact})")
             
     # --- HISTORICAL CONTEXT ---
     st.info(f"**Historical Match:** Statistically similar to the {int(match['year'])} {match['name']} Earthquake, which caused ${match['damage']:,.2f} Million in damage.")
