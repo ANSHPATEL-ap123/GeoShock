@@ -53,11 +53,13 @@ if st.button("Run AI Analysis", type="primary"):
     with col1:
         st.metric(label="Estimated Economic Damage", value=f"${economic_damage:,.2f} M")
         
-    with col2:
-        # Display impact tier based on raw model prediction
+   with col2:
+        # Display impact tier using standard if/else control flow
         if raw_impact == 0:
-            # Note: If your LabelEncoder mapped 0 to Severe/High, change this block
-            st.error("Human Impact: Severe (Tier 0)") if economic_damage > 1000 else st.success("Human Impact: Minimal (Tier 0)")
+            if economic_damage > 1000:
+                st.error("Human Impact: Severe (Tier 0)")
+            else:
+                st.success("Human Impact: Minimal (Tier 0)")
         elif raw_impact == 1:
             st.warning("Human Impact: Moderate (Tier 1)")
         else:
