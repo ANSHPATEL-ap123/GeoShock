@@ -45,11 +45,3 @@ GeoShock processes inputs (Magnitude and Focal Depth) through three distinct mac
 
 ---
 
-## 🛠️ Installation & Local Deployment
-
-To run this project locally on your machine, follow these steps:
-
-**1. Clone the repository:**
-```bash
-git clone [https://github.com/YourUsername/GeoShock.git](https://github.com/YourUsername/GeoShock.git)
-cd GeoShock
