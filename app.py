@@ -53,7 +53,7 @@ if st.button("Run AI Analysis", type="primary"):
     with col1:
         st.metric(label="Estimated Economic Damage", value=f"${economic_damage:,.2f} M")
         
-   with col2:
+    with col2:
         # Display impact tier using standard if/else control flow
         if raw_impact == 0:
             if economic_damage > 1000:
